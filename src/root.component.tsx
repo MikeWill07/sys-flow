@@ -3,6 +3,7 @@ import SignUp from "./auth/front-end/pages/sign-up";
 import SignIn from "./auth/front-end/pages/sign-in";
 import { isAuthenticated } from "./auth/back-end/services/is-authenticated";
 import Home from "./auth/front-end/pages/home";
+import NotFound from "./auth/front-end/pages/not-found";
 
 export default function Root(props) {
   return (
@@ -20,6 +21,7 @@ export default function Root(props) {
           path="/signup"
           element={isAuthenticated("1") ? <Home /> : <SignUp />}
         />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
   );
