@@ -3,7 +3,7 @@ import { SignUpFormType } from "../../back-end/types/sign-up-form-type";
 import { signUpFormSchema } from "../../back-end/schemas/sign-up-form-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signUpUser } from "../../back-end/services/sign-up-user";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function SignUp() {
   const navigate = useNavigate();
@@ -71,6 +71,7 @@ export default function SignUp() {
         <br />
         <button type="submit">Cadastrar</button>
       </form>
+      <Link to="/signin">Já tenho cadatro</Link>
     </div>
   );
 }

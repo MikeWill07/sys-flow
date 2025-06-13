@@ -3,7 +3,7 @@ import { SignInFormType } from "../../back-end/types/sign-in-form-type";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signInFormSchema } from "../../back-end/schemas/sign-in-form-schema";
 import { signInWithMock } from "../../back-end/services/sign-in-user";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function SignIn() {
   const navigate = useNavigate();
@@ -46,6 +46,7 @@ export default function SignIn() {
         <br />
         <button type="submit">Logar</button>
       </form>
+      <Link to="/signup">Não tenho cadastro</Link>
     </div>
   );
 }
