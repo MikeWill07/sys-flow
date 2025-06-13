@@ -32,6 +32,7 @@
     "babel-jest": "^27.5.1",
     "concurrently": "^6.2.1",
     "cross-env": "^7.0.3",
+    "crypto-js": "^4.2.0",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-config-ts-react-important-stuff": "^3.0.0",
@@ -70,7 +71,7 @@
     "single-spa": "^5.9.3",
     "single-spa-react": "^6.0.2",
     "tailwindcss": "^4.1.8",
-    "zod": "^3.25.57"
+    "zod": "^3.25.62"
   },
   "types": "dist/mfe-sys-flow.d.ts"
 }
