@@ -1,10 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import Modal from "../../../utils/components/modal";
-import {
-  renderBuildings,
-  listBuildings,
-} from "../../back-end/services/render-buildings";
+import { renderBuildings } from "../../back-end/services/render-buildings";
+import { listBuildings } from "../../back-end/services/list-building";
 import { Building } from "../../back-end/types/building-type";
 import {
   listBalances,
@@ -13,10 +11,8 @@ import {
 import { Balances } from "../../back-end/types/balance-types";
 import { useForm } from "react-hook-form";
 import { mockBuildings, mockUsers } from "../../../auth/back-end/mock-users";
-
-type FormValues = {
-  search: string;
-};
+import { Search } from "../../back-end/types/search-type";
+import { filterBuildings } from "../../back-end/services/filter-buildings";
 
 export default function Buildings() {
   const navigate = useNavigate();
@@ -24,19 +20,17 @@ export default function Buildings() {
   const [modalBalanceOpen, setModalBalanceOpen] = useState(false);
   const [buildings, setBuildings] = useState<Building[]>([]);
   const [balances, setBalances] = useState<Balances[]>([]);
-  const { register, handleSubmit, reset } = useForm();
+  const { register, handleSubmit } = useForm();
   const [filteredBuildings, setFilteredBuildings] = useState(mockBuildings);
 
-  const onSubmit = (data: FormValues) => {
-    const result = mockBuildings.filter((building) =>
-      building.nome.toLowerCase().includes(data.search.toLowerCase())
-    );
-    setFilteredBuildings(result);
+  const onSubmit = (data: Search) => {
+    const filtered = filterBuildings(buildings, data.search);
+    setFilteredBuildings(filtered);
   };
 
   useEffect(() => {
-    const Buildings = listBuildings();
-    setBuildings(Buildings);
+    const allBuildings = listBuildings();
+    setBuildings(allBuildings);
   }, []);
 
   useEffect(() => {
@@ -67,7 +61,7 @@ export default function Buildings() {
         </div>
       </div>
       <div>
-        <form onSubmit={handleSubmit(onsubmit)}>
+        <form onSubmit={handleSubmit(onSubmit)}>
           <input type="text" {...register("search")} />
           <button type="submit">Buscar</button>
         </form>
@@ -90,7 +84,11 @@ export default function Buildings() {
         </Modal>
       </div>
       <div style={{ border: "1px solid black", padding: "10px" }}>
-        {renderBuildings(buildings)}
+        {filteredBuildings.length == 0 ? (
+          <p>Nenhum edifício encontrado</p>
+        ) : (
+          renderBuildings(filteredBuildings)
+        )}
       </div>
       <div>
         <button onClick={() => navigate("/buildings")}>Edifícios</button>
