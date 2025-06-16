@@ -1,7 +1,7 @@
 import { mockBuildings } from "../../../auth/back-end/mock-users";
 import { Building } from "../types/building-type";
 
-export function listarEdificios() {
+export function listBuildings() {
   return mockBuildings;
 }
 

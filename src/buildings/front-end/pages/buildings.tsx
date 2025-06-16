@@ -3,19 +3,46 @@ import { useState, useEffect } from "react";
 import Modal from "../../../utils/components/modal";
 import {
   renderBuildings,
-  listarEdificios,
+  listBuildings,
 } from "../../back-end/services/render-buildings";
 import { Building } from "../../back-end/types/building-type";
+import {
+  listBalances,
+  renderBalances,
+} from "../../back-end/services/render-balances";
+import { Balances } from "../../back-end/types/balance-types";
+import { useForm } from "react-hook-form";
+import { mockBuildings, mockUsers } from "../../../auth/back-end/mock-users";
+
+type FormValues = {
+  search: string;
+};
 
 export default function Buildings() {
   const navigate = useNavigate();
   const [modalBuildingOpen, setModalBuildingOpen] = useState(false);
   const [modalBalanceOpen, setModalBalanceOpen] = useState(false);
   const [buildings, setBuildings] = useState<Building[]>([]);
+  const [balances, setBalances] = useState<Balances[]>([]);
+  const { register, handleSubmit, reset } = useForm();
+  const [filteredBuildings, setFilteredBuildings] = useState(mockBuildings);
+
+  const onSubmit = (data: FormValues) => {
+    const result = mockBuildings.filter((building) =>
+      building.nome.toLowerCase().includes(data.search.toLowerCase())
+    );
+    setFilteredBuildings(result);
+  };
 
   useEffect(() => {
-    const edificios = listarEdificios();
-    setBuildings(edificios);
+    const Buildings = listBuildings();
+    setBuildings(Buildings);
+  }, []);
+
+  useEffect(() => {
+    const loggedUser = mockUsers[0];
+    const userBalances = listBalances(loggedUser.id);
+    setBalances(userBalances);
   }, []);
 
   return (
@@ -35,22 +62,13 @@ export default function Buildings() {
             onClose={() => setModalBalanceOpen(false)}
           >
             <h2>Histórico de Saldo</h2>
-            <h3>Entrada</h3>
-            <div style={{ display: "flex", gap: "10px" }}>
-              <p>tipo</p>
-              <p>data</p>
-            </div>
-            <div style={{ display: "flex", gap: "10px" }}>
-              <p>valor</p>
-              <p>hora</p>
-            </div>
-            <p>saldo atual</p>
+            {renderBalances(balances)}
           </Modal>
         </div>
       </div>
       <div>
-        <form action="">
-          <input type="text" />
+        <form onSubmit={handleSubmit(onsubmit)}>
+          <input type="text" {...register("search")} />
           <button type="submit">Buscar</button>
         </form>
       </div>
