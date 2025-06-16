@@ -13,6 +13,7 @@ import { useForm } from "react-hook-form";
 import { mockBuildings, mockUsers } from "../../../auth/back-end/mock-users";
 import { Search } from "../../back-end/types/search-type";
 import { filterBuildings } from "../../back-end/services/filter-buildings";
+import { createBuilding } from "../../back-end/services/create-building";
 
 export default function Buildings() {
   const navigate = useNavigate();
@@ -20,13 +21,22 @@ export default function Buildings() {
   const [modalBalanceOpen, setModalBalanceOpen] = useState(false);
   const [buildings, setBuildings] = useState<Building[]>([]);
   const [balances, setBalances] = useState<Balances[]>([]);
-  const { register, handleSubmit } = useForm();
+  const { register, handleSubmit, reset } = useForm();
   const [filteredBuildings, setFilteredBuildings] = useState(mockBuildings);
 
-  const onSubmit = (data: Search) => {
+  const handleSearch = (data: Search) => {
     const filtered = filterBuildings(buildings, data.search);
     setFilteredBuildings(filtered);
   };
+
+  async function handleCreateBuilding(data: Building) {
+    try {
+      await createBuilding(data);
+      reset();
+    } catch (err: any) {
+      alert("Erro: " + err.message);
+    }
+  }
 
   useEffect(() => {
     const allBuildings = listBuildings();
@@ -61,7 +71,7 @@ export default function Buildings() {
         </div>
       </div>
       <div>
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmit(handleSearch)}>
           <input type="text" {...register("search")} />
           <button type="submit">Buscar</button>
         </form>
@@ -75,9 +85,9 @@ export default function Buildings() {
           onClose={() => setModalBuildingOpen(false)}
         >
           <h2>Criar Edifício</h2>
-          <form>
+          <form onSubmit={handleSubmit(handleCreateBuilding)}>
             <label htmlFor="buildingName">Nome</label>
-            <input type="text" name="buildingName" />
+            <input type="text" {...register("nameBuilding")} />
             <br />
             <button type="submit">Salvar</button>
           </form>
