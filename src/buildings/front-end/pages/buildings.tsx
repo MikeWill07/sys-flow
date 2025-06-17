@@ -3,7 +3,10 @@ import { useState, useEffect } from "react";
 import Modal from "../../../utils/components/modal";
 import { renderBuildings } from "../../back-end/services/render-buildings";
 import { listBuildings } from "../../back-end/services/list-building";
-import { Building } from "../../back-end/types/building-type";
+import {
+  Building,
+  CreateBuildingType,
+} from "../../back-end/types/building-type";
 import {
   listBalances,
   renderBalances,
@@ -14,6 +17,8 @@ import { mockBuildings, mockUsers } from "../../../auth/back-end/mock-users";
 import { Search } from "../../back-end/types/search-type";
 import { filterBuildings } from "../../back-end/services/filter-buildings";
 import { createBuilding } from "../../back-end/services/create-building";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { createBuildingSchema } from "../../back-end/schemas/create-building-schema";
 
 export default function Buildings() {
   const navigate = useNavigate();
@@ -21,8 +26,17 @@ export default function Buildings() {
   const [modalBalanceOpen, setModalBalanceOpen] = useState(false);
   const [buildings, setBuildings] = useState<Building[]>([]);
   const [balances, setBalances] = useState<Balances[]>([]);
-  const { register, handleSubmit, reset } = useForm();
   const [filteredBuildings, setFilteredBuildings] = useState(mockBuildings);
+  const {
+    register: registerCreate,
+    handleSubmit: handleSubmitCreate,
+    reset: resetCreate,
+    formState: { errors: createErrors },
+  } = useForm<CreateBuildingType>({
+    resolver: zodResolver(createBuildingSchema),
+  });
+  const { register: registerSearch, handleSubmit: handleSubmitSearch } =
+    useForm<Search>();
 
   const handleSearch = (data: Search) => {
     const filtered = filterBuildings(buildings, data.search);
@@ -32,7 +46,7 @@ export default function Buildings() {
   async function handleCreateBuilding(data: Building) {
     try {
       await createBuilding(data);
-      reset();
+      resetCreate();
     } catch (err: any) {
       alert("Erro: " + err.message);
     }
@@ -71,8 +85,8 @@ export default function Buildings() {
         </div>
       </div>
       <div>
-        <form onSubmit={handleSubmit(handleSearch)}>
-          <input type="text" {...register("search")} />
+        <form onSubmit={handleSubmitSearch(handleSearch)}>
+          <input type="text" {...registerSearch("search")} />
           <button type="submit">Buscar</button>
         </form>
       </div>
@@ -85,9 +99,12 @@ export default function Buildings() {
           onClose={() => setModalBuildingOpen(false)}
         >
           <h2>Criar Edifício</h2>
-          <form onSubmit={handleSubmit(handleCreateBuilding)}>
+          <form onSubmit={handleSubmitCreate(handleCreateBuilding)}>
             <label htmlFor="buildingName">Nome</label>
-            <input type="text" {...register("nameBuilding")} />
+            <input type="text" {...registerCreate("nome")} />
+            {createErrors.nome && (
+              <p style={{ color: "red" }}>{createErrors.nome.message}</p>
+            )}
             <br />
             <button type="submit">Salvar</button>
           </form>

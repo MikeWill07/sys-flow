@@ -3,10 +3,10 @@ import { buildingAlreadyExists } from "../validators/building-validations";
 export async function createBuilding(data: any) {
   try {
     const newBuilding = {
-      name: data.nameBuilding,
+      nome: data.nome,
     };
 
-    if (buildingAlreadyExists(data.nameBuilding)) {
+    if (buildingAlreadyExists(data.nome)) {
       throw new Error("Prédio já cadastrado");
     }
 
