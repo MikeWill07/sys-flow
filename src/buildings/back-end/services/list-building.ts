@@ -1,4 +1,4 @@
-import { mockBuildings } from "../../../auth/back-end/mock-users";
+import { mockBuildings } from "../../../utils/mock-users";
 
 export function listBuildings() {
   return mockBuildings;

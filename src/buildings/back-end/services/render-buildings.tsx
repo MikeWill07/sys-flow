@@ -1,4 +1,4 @@
-import { mockBuildings } from "../../../auth/back-end/mock-users";
+import { mockBuildings } from "../../../utils/mock-users";
 import { Building } from "../types/building-type";
 
 export function renderBuildings(building: Building[]) {

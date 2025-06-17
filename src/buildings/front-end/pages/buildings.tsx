@@ -1,5 +1,9 @@
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { mockBuildings, mockUsers } from "../../../utils/mock-users";
+import { Search } from "../../back-end/types/search-type";
 import Modal from "../../../utils/components/modal";
 import { renderBuildings } from "../../back-end/services/render-buildings";
 import { listBuildings } from "../../back-end/services/list-building";
@@ -7,26 +11,18 @@ import {
   Building,
   CreateBuildingType,
 } from "../../back-end/types/building-type";
+import { filterBuildings } from "../../back-end/services/filter-buildings";
+import { createBuilding } from "../../back-end/services/create-building";
+import { createBuildingSchema } from "../../back-end/schemas/create-building-schema";
+import { sortBuildings } from "../../back-end/services/sort-buildings";
 import {
   listBalances,
   renderBalances,
 } from "../../back-end/services/render-balances";
 import { Balances } from "../../back-end/types/balance-types";
-import { useForm } from "react-hook-form";
-import { mockBuildings, mockUsers } from "../../../auth/back-end/mock-users";
-import { Search } from "../../back-end/types/search-type";
-import { filterBuildings } from "../../back-end/services/filter-buildings";
-import { createBuilding } from "../../back-end/services/create-building";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { createBuildingSchema } from "../../back-end/schemas/create-building-schema";
 
 export default function Buildings() {
   const navigate = useNavigate();
-  const [modalBuildingOpen, setModalBuildingOpen] = useState(false);
-  const [modalBalanceOpen, setModalBalanceOpen] = useState(false);
-  const [buildings, setBuildings] = useState<Building[]>([]);
-  const [balances, setBalances] = useState<Balances[]>([]);
-  const [filteredBuildings, setFilteredBuildings] = useState(mockBuildings);
   const {
     register: registerCreate,
     handleSubmit: handleSubmitCreate,
@@ -37,6 +33,12 @@ export default function Buildings() {
   });
   const { register: registerSearch, handleSubmit: handleSubmitSearch } =
     useForm<Search>();
+  const [modalBuildingOpen, setModalBuildingOpen] = useState(false);
+  const [buildings, setBuildings] = useState<Building[]>([]);
+  const [filteredBuildings, setFilteredBuildings] = useState(mockBuildings);
+  const [modalBalanceOpen, setModalBalanceOpen] = useState(false);
+  const [balances, setBalances] = useState<Balances[]>([]);
+  const [sortOption, setSortOption] = useState("");
 
   const handleSearch = (data: Search) => {
     const filtered = filterBuildings(buildings, data.search);
@@ -63,15 +65,24 @@ export default function Buildings() {
     setBalances(userBalances);
   }, []);
 
+  useEffect(() => {
+    const ordered = sortBuildings(filteredBuildings, sortOption);
+    setFilteredBuildings(ordered);
+  }, [sortOption]);
+
   return (
     <div>
       <h1>Edifícios</h1>
       <div style={{ display: "flex", gap: "10px" }}>
-        <select name="" id="">
-          <option value="">Ordem crescente nome</option>
-          <option value="">Ordem descrescente nome</option>
-          <option value="">Ordem crescente data</option>
-          <option value="">Ordem descrescente data</option>
+        <select
+          value={sortOption}
+          onChange={(e) => setSortOption(e.target.value)}
+        >
+          <option value="">Ordenar por</option>
+          <option value="name-asc">Ordem nome (A-Z)</option>
+          <option value="name-desc">Ordem nome (Z-A)</option>
+          <option value="date-asc">Ordem data (Mais recente)</option>
+          <option value="date-desc">Ordem data (Mais antigo)</option>
         </select>
         <div>
           <button onClick={() => setModalBalanceOpen(true)}>Saldo</button>

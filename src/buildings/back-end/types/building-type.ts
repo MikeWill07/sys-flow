@@ -5,6 +5,7 @@ export type Building = {
   id: string;
   nome: string;
   foto: string;
+  dataCriacao: string;
 };
 
 export type CreateBuildingType = z.infer<typeof createBuildingSchema>;

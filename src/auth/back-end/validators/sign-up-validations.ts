@@ -1,4 +1,4 @@
-import { mockUsers } from "../mock-users";
+import { mockUsers } from "../../../utils/mock-users";
 
 export default function normalizeEmail(email: string) {
   let result = email.toLocaleLowerCase();

@@ -1,4 +1,4 @@
-import { mockUsers } from "../mock-users";
+import { mockUsers } from "../../../utils/mock-users";
 
 export function getAccessToken(userId: string): string {
   const user = mockUsers.find((user) => user.id === userId);

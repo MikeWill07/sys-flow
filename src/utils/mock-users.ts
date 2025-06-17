@@ -15,16 +15,19 @@ export const mockBuildings = [
     id: "1",
     foto: "FotoPredio1",
     nome: "Baymetrics",
+    dataCriacao: "2024-06-01",
   },
   {
     id: "2",
     foto: "FotoPredio2",
     nome: "The members",
+    dataCriacao: "2024-03-21",
   },
   {
     id: "3",
     foto: "FotoPredio3",
     nome: "Empire State",
+    dataCriacao: "2024-12-07",
   },
 ];
 
